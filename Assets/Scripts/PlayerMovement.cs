@@ -376,12 +376,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void CustomAxisLimit(float theta) //I THINK that if you give this method an angle, it will adjust your direction to move in that angle within the unit circle.
     {
+        if (!_isGrounded && theta == 90)
+        { Debug.Log(theta); }
         _customTheta = theta;
+
+        if(_isGrounded)
+        { 
         int quadrant = CustomThetaAdjustment();
+        }
         _limitedHorizontalAxis = _power * Mathf.Sin(_customTheta * Mathf.Deg2Rad);
         //Debug.Log("_horizontal: " + _power * Mathf.Sin(_customTheta * Mathf.Deg2Rad));
         _limitedVerticalAxis = _power * Mathf.Cos(_customTheta * Mathf.Deg2Rad);
         //Debug.Log("_vertical: " + _power * Mathf.Sin(_customTheta * Mathf.Deg2Rad));
+
+        if (!_isGrounded)
+        {
+            //Debug.Log($"({_limitedVerticalAxis} , {_limitedHorizontalAxis})");
+        }
 
         CoordinateCompensation();
 
@@ -530,6 +541,22 @@ public class PlayerMovement : MonoBehaviour
         {
             AdjustedCustomTheta -= 90;
             quadrant++;
+            /*if (!_isGrounded)
+            {
+                Debug.Log("AdjustedTheta" + AdjustedCustomTheta);               //I FOUND THE ERROR, BUT I DONT KNOW WHY YET
+            }*/
+        }
+        while (AdjustedCustomTheta < 0)
+        {
+            AdjustedCustomTheta += 90;
+            if (quadrant >= 2)
+            {
+                quadrant--;
+            }else { quadrant = 4; }
+            /*if (!_isGrounded)
+            {
+                Debug.Log("AdjustedTheta" + AdjustedCustomTheta);               //I FOUND THE ERROR, BUT I DONT KNOW WHY YET
+            }*/
         }
 
 
@@ -600,16 +627,19 @@ public class PlayerMovement : MonoBehaviour
         }*/
         if (theta == 90)
         {
+
             _limitedVerticalAxis = _verticalAxis;
             _limitedHorizontalAxis = _horizontalAxis;
         }
         else if (theta == 180)
         {
+
             _limitedVerticalAxis = _verticalAxis;
             _limitedHorizontalAxis = _horizontalAxis;
         }
         else if (theta == 270)
         {
+
             _limitedVerticalAxis = _verticalAxis;
             _limitedHorizontalAxis = _horizontalAxis;
         }
@@ -684,7 +714,37 @@ public class PlayerMovement : MonoBehaviour
                 _deltaTheta -= 360;
             }
 
-            Debug.Log(_deltaTheta);
+            //Debug.Log(_deltaTheta);
+
+            if (_deltaTheta == 90 && !_isGrounded)
+            {
+                Debug.Log("theta = 90"); ;
+            }
+            if (_deltaTheta == 180 && !_isGrounded)
+            {
+                Debug.Log("theta = 180"); ;
+            }
+            if (_deltaTheta == 270 && !_isGrounded)
+            {
+                Debug.Log("theta = 270"); ;
+            }
+            if (_deltaTheta == 0 && !_isGrounded)
+            {
+                Debug.Log("theta = 0"); ;
+            }
+            if (_deltaTheta == -90 && !_isGrounded)
+            {
+                Debug.Log("theta = -90"); ;
+            }
+            if (_deltaTheta == -180 && !_isGrounded)
+            {
+                Debug.Log("theta = -180"); ;
+            }
+            if (_deltaTheta == -270 && !_isGrounded)
+            {
+                Debug.Log("theta = -270"); ;
+            }
+
 
             CustomAxisLimit(_deltaTheta);
 
