@@ -173,7 +173,7 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-        Vector3 move = transform.right * x + transform.forward * z;
+        Vector3 move = transform.right * x + transform.forward * z;         //Ray in front behind and at center of you, front and back checks angle of incline about you, then use the ray directly below you to calculate distance to ground if it is small enough that you should still be grounded then use the length to move yourself down on this move vector if you are not grounded 
 
         _controller.Move(move * _speed);
     }
