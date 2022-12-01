@@ -63,6 +63,9 @@ public class PlayerMovement : MonoBehaviour
     float _maxZ;
     float _maxX;
 
+
+    Vector3 _exportableDir;
+
     // Update is called once per frame
     void Update()
     {
@@ -175,7 +178,10 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;         //Ray in front behind and at center of you, front and back checks angle of incline about you, then use the ray directly below you to calculate distance to ground if it is small enough that you should still be grounded then use the length to move yourself down on this move vector if you are not grounded 
 
-        _controller.Move(move * _speed);
+        _exportableDir = move * _speed;
+
+        _controller.Move(_exportableDir);
+
     }
 
 
@@ -403,7 +409,7 @@ public class PlayerMovement : MonoBehaviour
     public float ThetaCheck()
     {
         float theta = 0;
-        int quadrant;
+        int quadrant = 0;
 
 
         if (_horizontalAxis != 0 && _verticalAxis != 0)
@@ -753,5 +759,25 @@ public class PlayerMovement : MonoBehaviour
 
 
         }
+    }
+
+    public float ImportHorAxis()
+    {
+        return _limitedHorizontalAxis;
+    }
+
+    public float ImportVertAxis()
+    {
+        return _limitedVerticalAxis;
+    }
+
+    public Vector3 ImportDir()
+    {
+        return _exportableDir;
+    }
+
+    public bool ImportGrnd()
+    {
+        return _isGrounded;
     }
 }
