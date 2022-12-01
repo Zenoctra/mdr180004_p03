@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     Vector3 _velocity;
 
     [SerializeField] float _gravity = -9.81f;
+    float _tempGravity;
     [SerializeField] float _jumpHeight = 3f;
 
     bool _isSprinting = false;
@@ -65,7 +66,16 @@ public class PlayerMovement : MonoBehaviour
 
 
     Vector3 _exportableDir;
+    [SerializeField] GameObject _playerCamera;
+    bool _isOnWall;
+    bool _isWallonL;
+    bool _wallJumped;
 
+
+    private void Start()
+    {
+        _tempGravity = _gravity;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -92,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
 
         
 
-        if(Input.GetButtonDown("Jump") && _isGrounded)
+        if(Input.GetButtonDown("Jump") && (_isGrounded||_isOnWall))
         {
             if (_holdRotation == 400) 
                 {
@@ -107,7 +117,10 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-
+            if (_isOnWall && _wallJumped == false)
+            {
+                _wallJumped=true;
+            }
 
             //Debug.Log(_initialTheta);
             JumpPressed();
@@ -142,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 _horizontalAxis = _limitedHorizontalAxis;
                 _verticalAxis = _limitedVerticalAxis;
+                _wallJumped = false;
 
             }
             if (!_isGrounded)
@@ -169,10 +183,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void SetPlayerPosition()
     {
-        
+
         
         x = _limitedHorizontalAxis;
         z = _limitedVerticalAxis;
+
+        
 
 
 
@@ -189,6 +205,9 @@ public class PlayerMovement : MonoBehaviour
     private void JumpPressed()
     {
         _velocity.y = Mathf.Sqrt(_jumpHeight * -2f * _gravity);
+        
+            
+        
     }
 
     private void SetVelocity()
@@ -350,6 +369,21 @@ public class PlayerMovement : MonoBehaviour
             //Debug.Log("VerticalAxis =" + _verticalAxis);
         }
 
+        if (_wallJumped)
+        {
+            if (_isWallonL)
+            {
+                _horizontalAxis = 1.4f;
+                //Debug.Log("Wall on L jumped");
+            }
+            else
+            {
+                _horizontalAxis = -1.4f;
+                //Debug.Log("Wall on R jumped");
+            }
+                    
+
+        }
 
         if ((_wPressed || _sPressed || _aPressed || _dPressed) || (_horizontalAxis!=0 || _verticalAxis!=0) && _isGrounded)
         {
@@ -360,6 +394,8 @@ public class PlayerMovement : MonoBehaviour
 
             //Debug.Log(_power);
         }
+
+        
 
         if (!_isGrounded)
         {
@@ -779,5 +815,27 @@ public class PlayerMovement : MonoBehaviour
     public bool ImportGrnd()
     {
         return _isGrounded;
+    }
+
+    public void SetIsWall(bool _OnWall, bool _wallonL)
+    {
+        if (_OnWall)
+        {
+
+            _isOnWall = _OnWall;
+            _isWallonL = _wallonL;
+            _gravity = -20;
+
+            if (_wallonL)
+            {
+                //Debug.Log("wallOnL");
+                _playerCamera.transform.rotation = Quaternion.Euler(45,45,45);
+            }
+        }
+        else
+        {
+            _gravity = _tempGravity;
+            _isOnWall = _OnWall;
+        }
     }
 }

@@ -11,6 +11,8 @@ public class WallRun : MonoBehaviour
 
     int _wallChkL = 0;
     int _wallChkR = 0;
+
+    bool _wallOnL;
    
 
     void Start()
@@ -22,21 +24,40 @@ public class WallRun : MonoBehaviour
     void Update()
     {
 
+        _tempisOnWall = _isOnWall;
         
         if (!_playerMovement.ImportGrnd())
         {
             RaycastHit hit;
 
-            if (Physics.Raycast(_playerCamera.gameObject.transform.position, _playerMovement.ImportDir() * 10, out hit, 10))
+            if (Physics.Raycast(_playerCamera.gameObject.transform.position, _playerMovement.ImportDir() * 10, out hit, 50))
             {
                 //Debug.Log("Something Detected in air");
 
-                if (_wallChkL>=2 || _wallChkR >= 2)
+                if (_wallChkL >= 2 || _wallChkR >= 2)
                 {
-                    _isOnWall = true;
-                    Debug.Log("OnWall");
+                    if (_wallChkL != _wallChkR)
+                    {
+                        _isOnWall = true;
+                        //Debug.Log("OnWall");
+                        if (_wallChkL > _wallChkR)
+                        {
+                            _wallOnL = true;
+                            
+                        }
+                        else _wallOnL = false;
+                    }
+                    else _isOnWall = false;
+                    
                 }
+                else _isOnWall = false;
             }
+            else _isOnWall = false;
+        }
+
+        if (_tempisOnWall != _isOnWall)
+        {
+            _playerMovement.SetIsWall(_isOnWall, _wallOnL);
         }
         
 
